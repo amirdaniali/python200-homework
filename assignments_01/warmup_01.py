@@ -91,12 +91,11 @@ print(f"Array Shape: {np.shape(arr)}")
 print(f"Array Size: {arr.size}")
 
 # Numpy Q3
-# todo
 
 """Using the 2D array from Q2, slice out the top-left 2x2 block and print it. The expected result is [[1, 2], [4, 5]]."""
 
-sliced_arr = arr[:2]
-# print(f"Array Shape: {sliced_arr}")
+sliced_arr = arr[:2, :2]
+print(f"Sliced 2x2 Array: {sliced_arr}")
 
 # Numpy Q4
 
