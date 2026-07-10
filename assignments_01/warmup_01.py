@@ -125,3 +125,86 @@ print(f"Array Standard Deviation: {np.std(arraged_array)}")
 generated_array = np.random.normal(0, 1, 200)
 print(f"Generated Random Values Mean: {np.mean(generated_array)}")
 print(f"Generated Random Values Standard Deviation: {np.std(generated_array)}")
+
+# --- Matplotlib ---
+
+# Matplotlib Q1
+
+"""Plot the following data as a line plot. Add a title "Squares", x-axis label "x", and y-axis label "y".
+
+x = [0, 1, 2, 3, 4, 5]
+y = [0, 1, 4, 9, 16, 25]"""
+
+import matplotlib.pyplot as plt
+
+data = {"x": [0, 1, 2, 3, 4, 5], "y": [0, 1, 4, 9, 16, 25]}
+
+fig, ax = plt.subplots()
+ax.plot(data["x"], data["y"])
+ax.set(title="Squares", xlabel="x", ylabel="y")
+plt.show()
+
+
+# Matplotlib Q2
+
+"""Create a bar plot for the following subject scores. Add a title "Subject Scores" and label both axes.
+
+subjects = ["Math", "Science", "English", "History"]
+scores   = [88, 92, 75, 83]"""
+
+data.update(
+    {
+        "subjects": ["Math", "Science", "English", "History"],
+        "scores": [88, 92, 75, 83],
+    }
+)
+
+
+plt.bar(data["subjects"], data["scores"], color="purple")
+plt.title("Subject Scores")
+plt.xlabel("Subjects")
+plt.ylabel("Scores")
+plt.show()
+
+# Matplotlib Q3
+
+"""Plot the two datasets below as a scatter plot on the same figure. Use different colors for each, add a legend, and label both axes.
+
+x1, y1 = [1, 2, 3, 4, 5], [2, 4, 5, 4, 5]
+x2, y2 = [1, 2, 3, 4, 5], [5, 4, 3, 2, 1]"""
+
+x1, y1 = [1, 2, 3, 4, 5], [2, 4, 5, 4, 5]
+x2, y2 = [1, 2, 3, 4, 5], [5, 4, 3, 2, 1]
+
+fig, ax = plt.subplots()
+ax.plot(x1, y1, color="red", label="Dataset 1")
+ax.plot(x2, y2, color="blue", label="Dataset 2")
+ax.legend()
+ax.set(xlabel="X-Axis", ylabel="Y-Axis")
+plt.show()
+
+
+# Matplotlib Q4
+
+"""Use plt.subplots() to create a figure with 1 row and 2 subplots side by side. In the left subplot, plot x vs y from Q1 as a line. In the right subplot, plot the subjects and scores from Q2 as a bar plot. Add a title to each subplot and call plt.tight_layout() before showing."""
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+ax1.plot(data["x"], data["y"])
+ax1.set_title("Line Plot")
+ax2.bar(data["subjects"], data["scores"])
+ax2.set_title("Bar Plot")
+plt.tight_layout()
+plt.show()
+
+# --- Descriptive Statistics ---
+
+# Stats Q1
+
+"""Given the list below, use NumPy to compute and print the mean, median, variance, and standard deviation. Label each printed value."""
+
+data = [12, 15, 14, 10, 18, 22, 13, 16, 14, 15]
+
+print(f"Mean: {np.mean(data)}")
+print(f"Median: {np.median(data)}")
+print(f"Variance: {np.var(data)}")
+print(f"Standard Deviation: {np.std(data)}")
