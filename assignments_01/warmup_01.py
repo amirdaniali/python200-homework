@@ -21,14 +21,14 @@ data = {
 df = pd.DataFrame(data)
 
 print(f"Num Rows: {df.head(3)}")
-print(f"Shape: {df.info()}")
+print(f"Shape: {df.shape}")
 print(f"Data Types: {df.dtypes}")
 
 # Pandas Q2
 
 """Using the DataFrame from Q1, filter the rows to show only students who passed and have a grade above 80. Print the result."""
 
-top_students = df[(df["passed"] == True) & (df["grade"] >= 80)]
+top_students = df[(df["passed"] == True) & (df["grade"] > 80)]
 print(f"Top Students: {top_students}")
 
 
@@ -44,7 +44,7 @@ print(f"Curved Grade: {df[:]}")
 """Add a new column called "name_upper" that contains each student's name in uppercase, using the .str accessor. Print the "name" and "name_upper" columns together."""
 
 df["name_upper"] = df["name"].str.upper()
-print(f"Name Upper: {df[["name_upper","name"]]}")
+print(f"Name Upper: {df[["name","name_upper"]]}")
 
 # Pandas Q5
 
