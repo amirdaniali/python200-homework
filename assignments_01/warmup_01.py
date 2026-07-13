@@ -367,4 +367,91 @@ print(
 
 # --- Correlation ---
 # Correlation Q1
+"""Compute the Pearson correlation between x and y below using np.corrcoef(). Print the full correlation matrix, then print just the correlation coefficient (the value at position [0, 1]).
 
+x = [1, 2, 3, 4, 5]
+y = [2, 4, 6, 8, 10]"""
+
+
+x = [1, 2, 3, 4, 5]
+y = [2, 4, 6, 8, 10]
+
+correlation_matrix = np.corrcoef(x, y)
+print(f"Full Correlation Matrix: {correlation_matrix}")
+print(f"Correlation Coefficient: {correlation_matrix[0, 1]}")
+
+# the expected correlation is 1 since y = 2x and the computer answer supports the expectation
+
+# Correlation Q2
+
+"""Use pearsonr() from scipy.stats to compute the correlation between x and y below. Print both the correlation coefficient and the p-value.
+
+from scipy.stats import pearsonr
+
+x = [1,  2,  3,  4,  5,  6,  7,  8,  9, 10]
+y = [10, 9,  7,  8,  6,  5,  3,  4,  2,  1]"""
+
+x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+y = [10, 9, 7, 8, 6, 5, 3, 4, 2, 1]
+
+from scipy.stats import pearsonr
+
+r, p = pearsonr(x, y)
+print("Correlation:", r)
+print("p-value:", p)
+
+# Correlation Q3
+
+"""Create the following DataFrame and use df.corr() to compute the correlation matrix. Print the result.
+
+people = {
+    "height": [160, 165, 170, 175, 180],
+    "weight": [55,  60,  65,  72,  80],
+    "age":    [25,  30,  22,  35,  28]
+}
+df = pd.DataFrame(people)"""
+
+people = {
+    "height": [160, 165, 170, 175, 180],
+    "weight": [55, 60, 65, 72, 80],
+    "age": [25, 30, 22, 35, 28],
+}
+df = pd.DataFrame(people)
+df_corr = df.corr()
+print("DataFrame Correlation Matrix:", df_corr)
+
+# Correlation Q4
+
+"""Create a scatter plot of x and y below, which have a negative relationship. Add a title "Negative Correlation" and label both axes.
+
+x = [10, 20, 30, 40, 50]
+y = [90, 75, 60, 45, 30]"""
+
+x = [10, 20, 30, 40, 50]
+y = [90, 75, 60, 45, 30]
+
+plt.scatter(x, y, color="orange")
+plt.title("Negative Correlation")
+plt.xlabel("X-Axis")
+plt.ylabel("Y-Axis")
+plt.show()
+
+# Correlation Q5
+
+"""Using the correlation matrix from Q3, create a heatmap with sns.heatmap(). Pass annot=True so the correlation values appear in each cell, and add a title "Correlation Heatmap".
+
+Hint:
+
+import seaborn as sns"""
+import seaborn as sns
+
+sns.heatmap(df_corr, annot=True, cmap="coolwarm", fmt=".2f")
+plt.title("Correlation Heatmap")
+plt.show()
+
+
+# --- Pipelines ---
+
+# Pipelines Q1
+
+""""""
