@@ -5,7 +5,6 @@
 
 # Part 2: Mini-Project: World Happiness Pipeline
 
-
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -54,18 +53,25 @@ def retrieve_all_years() -> pd.DataFrame:
     logger = get_run_logger()
     all_years = pd.DataFrame()
 
+    # This step is not necessary for the final submission, but it is useful for speeding up debugging and development.
     logger.info(f"Checking to see if the data has previously been processed.")
     if (BASE_DIR / "outputs/merged_happiness.csv").exists():
         logger.info(f"Data has already been processed.")
         logger.info(f"Skipping to next step.")
         return pd.read_csv(BASE_DIR / "outputs/merged_happiness.csv")
 
+    logger.info(f"Checking to see if data directory exists.")
+    if not DATA_DIR.exists():
+        logger.error(
+            f"Data directory does not exist. Ensure csv files are in {DATA_DIR}."
+        )
+        raise FileNotFoundError(f"Data directory does not exist.")
+
     for filepath in DATA_DIR.glob("*.csv"):
         year_df = retrieve_year_from_file(filepath)
         logger.info(f"Adding year rows to DataFrame.")
         all_years = pd.concat([all_years, year_df])
 
-    print(f"All Rows: {all_years}")
     logger.info(f"All rows added to DataFrame.")
     all_years.to_csv(BASE_DIR / "outputs/merged_happiness.csv")
     logger.info(f"Merged DataFrame saved to outputs/merged_happiness.csv")
