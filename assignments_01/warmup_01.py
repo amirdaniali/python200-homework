@@ -72,9 +72,7 @@ print(f"Array ndim: {arr.ndim}")
 
 # NumPy Q2
 """Create the following 2D array and print its shape and size (total number of elements)."""
-arr2d = np.array([[1, 2, 3],
-                  [4, 5, 6],
-                  [7, 8, 9]])
+arr2d = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
 print(f"2D Array:\n{arr2d}")
 print(f"2D Array Shape: {arr2d.shape}")
 print(f"2D Array Size: {arr2d.size}")
@@ -268,7 +266,9 @@ print(f"One-sample t-test p-value: {p_val_one:.6f}")
 
 # Hypothesis Q5
 """One-tailed test: check whether group_a_ht scores are less than group_b_ht scores."""
-t_stat_one_tail, p_val_one_tail = stats.ttest_ind(group_a_ht, group_b_ht, alternative="less")
+t_stat_one_tail, p_val_one_tail = stats.ttest_ind(
+    group_a_ht, group_b_ht, alternative="less"
+)
 print(f"One-tailed t-test p-value (group_a < group_b): {p_val_one_tail:.6f}")
 
 # Hypothesis Q6
@@ -333,8 +333,9 @@ plt.show()
 # Pipeline Q1
 """Plain Python data pipeline with create_series, clean_data, summarize_data, and data_pipeline()."""
 
-arr_pipeline = np.array([12.0, 15.0, np.nan, 14.0, 10.0, np.nan,
-                         18.0, 14.0, 16.0, 22.0, np.nan, 13.0])
+arr_pipeline = np.array(
+    [12.0, 15.0, np.nan, 14.0, 10.0, np.nan, 18.0, 14.0, 16.0, 22.0, np.nan, 13.0]
+)
 
 
 def create_series(arr):

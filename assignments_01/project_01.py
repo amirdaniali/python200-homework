@@ -32,14 +32,23 @@ def retrieve_year_from_file(filepath: Path) -> pd.DataFrame:
 
 @task(retries=3, retry_delay_seconds=2)
 def retrieve_all_years() -> pd.DataFrame:
-    """Load data from all ten yearly CSV files into a single DataFrame. Your implementation should not duplicate code for each year -- iterate over a list of file paths and load them in a loop.
-    You discovered some quirks when you inspected the raw files. Make sure you account for those when calling pd.read_csv(). There is also something missing from each file that you will need to add before merging: each row needs to know which year it came from. Think about where to add that information.
+    """Task 1: Load Multiple Years of Data
+
+    Load data from all ten yearly CSV files into a single DataFrame. Your
+    implementation should not duplicate code for each year -- iterate over a list
+    of file paths and load them in a loop.
+
+    You discovered some quirks when you inspected the raw files. Make sure you
+    account for those when calling pd.read_csv(). There is also something missing
+    from each file that you will need to add before merging: each row needs to
+    know which year it came from. Think about where to add that information.
 
     After loading and merging, save the combined dataset to:
-
     assignments_01/outputs/merged_happiness.csv
 
-    Add retries=3, retry_delay_seconds=2 to this task's decorator. File I/O is exactly the kind of operation that can fail intermittently in production pipelines, and this is where retries earn their keep.
+    Add retries=3, retry_delay_seconds=2 to this task's decorator. File I/O is
+    exactly the kind of operation that can fail intermittently in production
+    pipelines, and this is where retries earn their keep.
     """
 
     logger = get_run_logger()
@@ -65,22 +74,23 @@ def retrieve_all_years() -> pd.DataFrame:
 
 @task
 def process_data(df: pd.DataFrame) -> pd.DataFrame:
-    """processes the data to be used in later stages"""
+    """Processes the data to be used in later stages:
+    - Fix column naming for happiness score.
+    - For 2024, fill happiness score from ladder score if needed.
+    - Convert comma decimals to floats for all numeric columns.
+    """
 
     logger = get_run_logger()
+    logger.info("Starting data processing.")
 
-    # if Happiness score is missing for 2024 and ladder score exists:
-    df["Happiness score"] = df.get("Happiness score", pd.NA)  # in case column missing
-    df.loc[df["Year"] == 2024, "Happiness score"] = df.loc[
-        df["Year"] == 2024, "Ladder score"
-    ]
+    # if happiness score is missing for 2024 and ladder score exists:
+    if "Ladder score" in df.columns:
+        logger.info("Filling 2024 happiness scores from ladder score where available.")
+        mask_2024 = df["Year"] == 2024
+        df.loc[mask_2024, "Happiness score"] = df.loc[mask_2024, "Ladder score"]
 
-    df["Happiness score"] = (
-        df["Happiness score"].astype(str).str.replace(",", ".", regex=False)
-    )
-    df["Happiness score"] = pd.to_numeric(df["Happiness score"], errors="coerce")
-
-    numeric_cols = [
+    # numeric-like columns using comma decimals in raw CSV
+    numeric_like_cols = [
         "Happiness score",
         "GDP per capita",
         "Social support",
@@ -90,15 +100,15 @@ def process_data(df: pd.DataFrame) -> pd.DataFrame:
         "Perceptions of corruption",
     ]
 
-    for col in numeric_cols:
+    for col in numeric_like_cols:
         if col in df.columns:
-            logger.info(f"Converting column '{col}' from comma decimals to floats.")
+            logger.info(f"Cleaning numeric column '{col}' (comma decimals -> floats).")
             df[col] = df[col].astype(str).str.replace(",", ".", regex=False)
             df[col] = pd.to_numeric(df[col], errors="coerce")
 
-    # ensure Year is integer
+    # ensure Year is a plain integer type for plotting/grouping
     if "Year" in df.columns:
-        df["Year"] = pd.to_numeric(df["Year"], errors="coerce").astype("Int64")
+        df["Year"] = pd.to_numeric(df["Year"], errors="coerce").astype(int)
 
     logger.info("Data processing complete.")
     return df
@@ -106,9 +116,13 @@ def process_data(df: pd.DataFrame) -> pd.DataFrame:
 
 @task
 def describe_data(df):
-    """Compute and log overall descriptive statistics for happiness_score: mean, median, and standard deviation.
+    """Compute and log overall descriptive statistics for happiness_score:
+    mean, median, and standard deviation.
 
-    Then compute and log the mean happiness score grouped by year and by region. Looking at the regional breakdown is often the most interesting part of this dataset -- you may already have a hypothesis about which regions rank highest before you run the numbers.
+    Then compute and log the mean happiness score grouped by year and by region.
+    Looking at the regional breakdown is often the most interesting part of this
+    dataset -- you may already have a hypothesis about which regions rank highest
+    before you run the numbers.
     """
 
     logger = get_run_logger()
@@ -155,7 +169,6 @@ def happiness_histogram(df: pd.DataFrame) -> None:
     )
     plt.title("Happiness score distribution by year")
     plt.tight_layout()
-    plt.show()
     plt.savefig(BASE_DIR / "outputs/happiness_histogram.png")
     logger.info('Plot saved to "happiness_histogram.png"')
     plt.close()
@@ -172,13 +185,13 @@ def happiness_boxplot(df: pd.DataFrame) -> None:
     plt.tight_layout()
     plt.savefig(BASE_DIR / "outputs/happiness_by_year.png")
     logger.info('Plot saved to "happiness_by_year.png"')
-    plt.show()
     plt.close()
 
 
 @task()
 def gdp_vs_happiness(df: pd.DataFrame) -> None:
     """Create and save a scatter plot showing the relationship between GDP per capita     and happiness score. Save as gdp_vs_happiness.png."""
+
     logger = get_run_logger()
     logger.info("Creating GDP vs Happiness scatter plot.")
 
@@ -206,8 +219,13 @@ def gdp_vs_happiness(df: pd.DataFrame) -> None:
 
 @task()
 def correlation_heatmap(df: pd.DataFrame) -> None:
-    """Create and save a correlation heatmap (Pearson correlations) between all numeric
-    columns. Save as correlation_heatmap.png.
+    """Create and save a correlation heatmap (using sns.heatmap() with annot=True)
+    showing the Pearson correlations between all numeric columns.
+    Save as correlation_heatmap.png.
+
+    Log a message after the plot is saved so you can see the progress in the
+    Prefect dashboard.
+
     """
     logger = get_run_logger()
     logger.info("Creating correlation heatmap.")
@@ -228,9 +246,18 @@ def correlation_heatmap(df: pd.DataFrame) -> None:
 
 @task()
 def hypothesis_tests(df: pd.DataFrame) -> dict:
-    """Run hypothesis tests:
-    - Independent samples t-test comparing happiness scores from 2019 to 2020.
-    - Second test comparing happiness scores between two regions.
+    """The pandemic began in early 2020. Did it affect global happiness scores?
+    Test this directly: run an independent samples t-test comparing happiness
+    scores from 2019 to 2020.
+
+    Log the t-statistic, p-value, the mean happiness for each group, and a
+    plain-language interpretation of the result at alpha = 0.05. Your
+    interpretation should say something meaningful -- not just "we reject the
+    null hypothesis" but what that actually means in terms of this data.
+
+    Add a second test of your choice (for example, comparing two specific regions
+    that you expect to differ based on the descriptive statistics you computed
+    earlier).
 
     Returns a dict summarizing key results for use in the summary report.
     """
@@ -359,8 +386,19 @@ def hypothesis_tests(df: pd.DataFrame) -> dict:
 @task()
 def correlation_and_multiple_comparisons(df: pd.DataFrame) -> dict:
     """For each numeric explanatory variable, compute the Pearson correlation with
-    happiness score, log coefficient, and p-value, apply Bonferroni correction, and
-    return a summary dict for use in the final report.
+    happiness score using scipy.stats.pearsonr and log the coefficient and
+    p-value.
+
+    Count how many correlation tests you performed, then compute:
+    adjusted_alpha = 0.05 / number_of_tests
+
+    Log which correlations are significant at the original alpha = 0.05, and
+    which remain significant after applying the Bonferroni correction. You may
+    find that some results that looked significant at first don't hold up under
+    the stricter threshold -- that's a useful finding in itself.
+
+    Return a summary dict of correlations and significance for use in the final
+    report.
     """
 
     logger = get_run_logger()
@@ -452,24 +490,33 @@ def correlation_and_multiple_comparisons(df: pd.DataFrame) -> dict:
 
 @task()
 def summary_report(df: pd.DataFrame, t_results: dict, corr_results: dict) -> None:
-    """Log a human-readable summary of key findings:
+    """Log a human-readable summary of the key findings from the entire pipeline.
+    Think of it as the "report" step -- the thing you'd share with a
+    non-technical colleague. It should include:
+
     - Total number of countries and years in the merged dataset.
-    - Top 3 and bottom 3 regions by mean happiness score.
-    - Result of the pre/post-2020 t-test in plain language.
-    - Variable most strongly correlated with happiness score (after Bonferroni correction).
+    - The top 3 and bottom 3 regions by mean happiness score.
+    - The result of the pre/post-2020 t-test in plain language.
+    - The variable most strongly correlated with happiness score (after
+      Bonferroni correction).
+
+    Log each of these as a separate logger.info() message so they're easy to
+    find in the Prefect dashboard.
     """
 
     logger = get_run_logger()
     logger.info("Generating summary report.")
 
-    # total number of countries and years
+    # Total number of countries and years
     num_countries = df["Country"].nunique() if "Country" in df.columns else None
     num_years = df["Year"].nunique() if "Year" in df.columns else None
 
-    logger.info(f"Total number of countries in merged dataset: {num_countries}")
-    logger.info(f"Total number of years in merged dataset: {num_years}")
+    logger.info(
+        f"Summary: total number of countries in merged dataset = {num_countries}"
+    )
+    logger.info(f"Summary: total number of years in merged dataset = {num_years}")
 
-    # top 3 and bottom 3 regions by mean happiness score
+    # Top 3 and bottom 3 regions by mean happiness score
     if "Regional indicator" in df.columns:
         region_means = (
             df.groupby("Regional indicator")["Happiness score"]
@@ -477,10 +524,76 @@ def summary_report(df: pd.DataFrame, t_results: dict, corr_results: dict) -> Non
             .sort_values(ascending=False)
         )
 
+        top_3 = region_means.head(3)
+        bottom_3 = region_means.tail(3)
+
+        logger.info("Summary: top 3 regions by mean happiness score:")
+        logger.info(top_3.to_string())
+
+        logger.info("Summary: bottom 3 regions by mean happiness score:")
+        logger.info(bottom_3.to_string())
+    else:
+        logger.info(
+            "Summary: 'Regional indicator' column not found; cannot compute region means."
+        )
+
+    # Pre/post-2020 t-test in plain language
+    if "t_2019_2020" in t_results:
+        t_info = t_results["t_2019_2020"]
+        logger.info(
+            "Summary: pre/post-2020 t-test result: "
+            f"mean_2019 = {t_info['mean_2019']:.3f}, "
+            f"mean_2020 = {t_info['mean_2020']:.3f}, "
+            f"t-statistic = {t_info['t_stat']:.3f}, "
+            f"p-value = {t_info['p_value']:.3f}"
+        )
+        logger.info(
+            f"Summary: interpretation (2019 vs 2020): {t_info['interpretation']}"
+        )
+    else:
+        logger.info("Summary: no t-test results for 2019 vs 2020 were available.")
+
+    # Strongest correlation after Bonferroni correction
+    strongest_var = corr_results.get("strongest_variable")
+    strongest_r = corr_results.get("strongest_r")
+    adjusted_alpha = corr_results.get("adjusted_alpha")
+    if (
+        strongest_var is not None
+        and strongest_r is not None
+        and adjusted_alpha is not None
+    ):
+        logger.info(
+            "Summary: most strongly correlated variable with happiness score "
+            f"after Bonferroni correction is '{strongest_var}' "
+            f"with Pearson r = {strongest_r:.3f} at adjusted alpha = {adjusted_alpha:.5f}."
+        )
+    else:
+        logger.info(
+            "Summary: no variable remained significant after Bonferroni correction, "
+            "or correlation results were unavailable."
+        )
+
 
 @flow
 def happiness_pipeline() -> None:
-    """Orchestrates the full World Happiness analysis pipeline."""
+    """Orchestrates the full World Happiness analysis pipeline. This flow should:
+
+    - Load and merge multiple years of data (Task 1).
+    - Process and clean the dataset for analysis.
+    - Compute descriptive statistics (Task 2).
+    - Generate visualizations (Task 3).
+    - Run hypothesis tests (Task 4).
+    - Compute correlations and apply Bonferroni correction (Task 5).
+    - Log a final summary report of key findings (Task 6).
+
+    The full pipeline should be runnable with:
+
+        python project_01.py
+
+    When you run it, it should execute all tasks in order, produce all outputs,
+    and save them to the specified locations. It should be safe to run multiple
+    times, overwriting previous outputs cleanly."""
+
     logger = get_run_logger()
     logger.info("Starting World Happiness pipeline.")
 

@@ -69,6 +69,18 @@ if __name__ == "__main__":
     for key, value in pipeline_flow(arr).items():
         print(f"{key}: {value}")
 
-    # Prefect is too overkill here because the pipeline is simple. We don't need lifecycles, retries, etc. which Prefect provides. Prefect introduces a lot of things I need to learn and understand which simple python functions can do the same job.
 
-    # Prefect reminds me of Java Beans. Prefect is a framework for orchestrating tasks and flows. When the task is ran multiple times a day or week, prefect helps with turning manual supervision into a system. Which is good.
+"""
+Prefect question 1:
+This pipeline is very simple: three short steps on a single in-memory array with no schedules, retries, or external systems.
+For this kind of one-off script, Prefect adds overhead (extra configuration, runtime, dashboard, etc.) without providing much benefit beyond what plain Python functions and prints already give.
+
+Prefect question 2:
+Even for simple pipelines, a framework like Prefect becomes useful when:
+- The pipeline needs to run on a schedule (e.g., hourly or daily) and we want automatic retries on failures.
+- Steps depend on external resources (files, APIs, databases) where logging, monitoring, and error handling are important.
+- You want a central place (UI/API) to see runs, logs, and statuses, rather than reading local print output.
+- Multiple small pipelines need to be orchestrated together across environments or machines.
+
+In those scenarios, keeping the logic simple but using Prefect for orchestration, logging, and observability can still be a big win.
+"""
