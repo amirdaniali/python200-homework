@@ -57,7 +57,7 @@ def summarize_data(series):
 
 
 @flow
-def data_pipeline(arr):
+def pipeline_flow(arr):
     series = create_series(arr)
     cleaned_series = clean_data(series)
     summary = summarize_data(cleaned_series)
@@ -66,7 +66,7 @@ def data_pipeline(arr):
 
 if __name__ == "__main__":
 
-    for key, value in data_pipeline(arr).items():
+    for key, value in pipeline_flow(arr).items():
         print(f"{key}: {value}")
 
     # Prefect is too overkill here because the pipeline is simple. We don't need lifecycles, retries, etc. which Prefect provides. Prefect introduces a lot of things I need to learn and understand which simple python functions can do the same job.

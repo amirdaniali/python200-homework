@@ -283,12 +283,14 @@ data2 = [10, 12, 12, 16, 150]
 
 print(f"Data1 Mean: {np.mean(data1)}")
 print(f"Data1 Median: {np.median(data1)}")
+# todo add data mode
 
 print(f"Data2 Mean: {np.mean(data2)}")
 print(f"Data2 Median: {np.median(data2)}")
 
 # Median is the same for both data sets
 # Mean is higher for data2 because it is more skewed with the inclusion of 150
+# it is skewed more towards the right than data1
 
 # --- Hypothesis Testing ---
 
