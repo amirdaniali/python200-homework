@@ -208,3 +208,163 @@ print(f"Mean: {np.mean(data)}")
 print(f"Median: {np.median(data)}")
 print(f"Variance: {np.var(data)}")
 print(f"Standard Deviation: {np.std(data)}")
+
+# Stats Q2
+
+"""Generate 500 random values from a normal distribution with mean 65 and standard deviation 10 (use np.random.normal(65, 10, 500)). Plot a histogram with 20 bins. Add a title "Distribution of Scores" and label both axes."""
+
+
+generated_array = np.random.normal(65, 10, 500)
+plt.hist(generated_array, bins=20)
+plt.title("Distribution of Scores")
+plt.xlabel("Scores")
+plt.ylabel("Frequency")
+plt.show()
+
+# Stats Q3
+
+"""Create a boxplot comparing the two groups below. Label each box ("Group A" and "Group B") and add a title "Score Comparison".
+
+group_a = [55, 60, 63, 70, 68, 62, 58, 65]
+group_b = [75, 80, 78, 90, 85, 79, 82, 88]"""
+
+group_a = [55, 60, 63, 70, 68, 62, 58, 65]
+group_b = [75, 80, 78, 90, 85, 79, 82, 88]
+
+fig, ax = plt.subplots()
+ax.boxplot([group_a, group_b])
+ax.set_ylabel("Scores")
+ax.set_xlabel("Groups")
+plt.title("Score Comparison")
+plt.show()
+
+# Stats Q4
+
+"""You are given two datasets: one normally distributed and one 'exponential' distribution.
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+normal_data = np.random.normal(50, 5, 200)
+skewed_data = np.random.exponential(10, 200)
+
+Create side-by-side boxplots comparing the two distributions. Label each boxplot appropriately ("Normal" and "Exponential") and add a title "Distribution Comparison".
+
+Then, add a comment in your code briefly noting which distribution is more skewed, and which descriptive statistic (mean or median) would provide a more appropriate measure of central tendency for each distribution."""
+
+normal_data = np.random.normal(50, 5, 200)
+skewed_data = np.random.exponential(10, 200)
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+ax1.boxplot(normal_data)
+ax1.set_ylabel("Values")
+ax1.set_xlabel("Normal")
+ax2.boxplot(skewed_data)
+ax2.set_ylabel("Values")
+ax2.set_xlabel("Exponential")
+plt.title("Distribution Comparison")
+plt.show()
+
+# Exponential Distribution is more skewed than Normal Distribution
+# Mean is more appropriate than Median for Normal Distribution
+# Median is more appropriate than Mean for Exponential Distribution because it resists being pulled by extreme outliers.
+
+# Stats Q5
+
+"""Print the mean, median, and mode of the following:
+data1 = [10, 12, 12, 16, 18]
+
+data2 = [10, 12, 12, 16, 150]
+
+Why are the median and mean so different for data2? Add your answer as a comment in the code."""
+
+data1 = [10, 12, 12, 16, 18]
+data2 = [10, 12, 12, 16, 150]
+
+print(f"Data1 Mean: {np.mean(data1)}")
+print(f"Data1 Median: {np.median(data1)}")
+
+print(f"Data2 Mean: {np.mean(data2)}")
+print(f"Data2 Median: {np.median(data2)}")
+
+# Median is the same for both data sets
+# Mean is higher for data2 because it is more skewed with the inclusion of 150
+
+# --- Hypothesis Testing ---
+
+# Hypothesis Testing Q1
+
+"""Run an independent samples t-test on the two groups below. Print the t-statistic and p-value.
+
+from scipy import stats
+
+group_a = [72, 68, 75, 70, 69, 73, 71, 74]
+group_b = [80, 85, 78, 83, 82, 86, 79, 84]"""
+
+from scipy import stats
+
+group_a = [72, 68, 75, 70, 69, 73, 71, 74]
+group_b = [80, 85, 78, 83, 82, 86, 79, 84]
+
+t_stat, p_val = stats.ttest_ind(group_a, group_b)
+
+print("t-statistic:", t_stat)
+print("p-value:", p_val)
+
+
+# Hypothesis Testing Q2
+
+"""Using the p-value from Q1, write an if/else statement that prints whether the result is statistically significant at alpha = 0.05."""
+
+if p_val < 0.05:
+    print("The difference is statistically significant.")
+else:
+    print("No statistically significant difference detected.")
+
+# Hypothesis Testing Q3
+
+"""Run a paired t-test on the before/after scores below (the same students measured twice). Print the t-statistic and p-value.
+
+before = [60, 65, 70, 58, 62, 67, 63, 66]
+after  = [68, 70, 76, 65, 69, 72, 70, 71]"""
+
+
+before = [60, 65, 70, 58, 62, 67, 63, 66]
+after = [68, 70, 76, 65, 69, 72, 70, 71]
+
+t_stat, p_val = stats.ttest_rel(before, after)
+
+print(f"t-statistic: {t_stat:.3f}")
+print(f"p-value: {p_val:.6f}")
+
+# Hypothesis Testing Q4
+
+"""Run a one-sample t-test to check whether the mean of scores is significantly different from a national benchmark of 70. Print the t-statistic and p-value.
+
+scores = [72, 68, 75, 70, 69, 74, 71, 73]"""
+
+scores = [72, 68, 75, 70, 69, 74, 71, 73]
+
+t_stat, p_val = stats.ttest_1samp(scores, 70)
+print(f"t-statistic: {t_stat:.3f}")
+print(f"p-value: {p_val:.6f}")
+
+# Hypothesis Testing Q5
+
+"""Re-run the test from Q1 as a one-tailed test to check whether group_a scores are less than group_b scores. Print the resulting p-value. Use the alternative parameter."""
+
+t_stat, p_val = stats.ttest_ind(group_a, group_b, alternative="less")
+print(f"One tail p-value: {p_val:.6f}")
+
+# Hypothesis Testing Q6
+
+"""Write a plain-language conclusion for the result of Q1 (do not just say "reject the null hypothesis"). Format it as a print() statement. Your conclusion should mention the direction of the difference and whether it is likely due to chance."""
+
+print(
+    "The difference in means is statistically significant as p-value= 0.000001, indicating that the difference in sample means is not just randomness of the data."
+)
+
+
+# --- Correlation ---
+# Correlation Q1
+
