@@ -454,4 +454,51 @@ plt.show()
 
 # Pipelines Q1
 
-""""""
+"""A data pipeline is a sequence of processing steps where each step takes in data, transforms it, and passes the result to the next. You don't need a special framework to build one -- chaining plain functions together is often enough.
+
+Given the array below, which contains some missing values scattered throughout:
+
+arr = np.array([12.0, 15.0, np.nan, 14.0, 10.0, np.nan, 18.0, 14.0, 16.0, 22.0, np.nan, 13.0])
+
+Implement the following three functions and then connect them in a data_pipeline() function.
+
+    create_series(arr) : takes a NumPy array and returns a pandas Series with the name "values".
+    clean_data(series) : takes the Series, removes any NaN values using .dropna(), and returns the cleaned Series.
+    summarize_data(series) -- takes the cleaned Series and returns a dictionary with four keys: "mean", "median", "std", and "mode". For mode, use series.mode()[0] to get a single value.
+    data_pipeline(arr) -- calls the three functions above in sequence and returns the summary dictionary.
+
+Call data_pipeline(arr) and print each key and its value from the result.
+This is the last answer to put in warmup_01.py. Congrats!!!
+The next question will be in prefect_warmup.py, but will implement the same functionality using Prefect instead of plain Python."""
+
+arr = np.array(
+    [12.0, 15.0, np.nan, 14.0, 10.0, np.nan, 18.0, 14.0, 16.0, 22.0, np.nan, 13.0]
+)
+
+
+def create_series(arr):
+    return pd.Series(arr, name="values")
+
+
+def clean_data(series):
+    return series.dropna()
+
+
+def summarize_data(series):
+    return {
+        "mean": series.mean(),
+        "median": series.median(),
+        "std": series.std(),
+        "mode": series.mode()[0],
+    }
+
+
+def data_pipeline(arr):
+    series = create_series(arr)
+    cleaned_series = clean_data(series)
+    summary = summarize_data(cleaned_series)
+    return summary
+
+
+for key, value in data_pipeline(arr).items():
+    print(f"{key}: {value}")
