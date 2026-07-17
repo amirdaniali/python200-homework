@@ -78,6 +78,9 @@ labels = kmeans.predict(X_clusters)  # 3. Predict a label for each point
 
 for i, center in enumerate(kmeans.cluster_centers_):
     plt.plot(center[0], center[1], "kx")
+    plt.xlabel("Data Points")
+    plt.ylabel("Cluster Centers")
+    plt.title("Clusters Found by K-Means")
     print(f"Cluster Center No {i}: {center}")
     print(f"Number of points in cluster {i}: {np.bincount(labels)[i]}")
 
@@ -90,7 +93,9 @@ plt.xlabel("Data Points")
 
 
 plt.tight_layout()
+os.makedirs("outputs", exist_ok=True)
 plt.savefig("outputs/kmeans_clusters.png", bbox_inches="tight")
+plt.close()
 
 # Linear Regression
 
@@ -129,7 +134,6 @@ plt.title("Medical Cost vs Age")
 plt.xlabel("Age")
 plt.legend(["Smoker", "Cost"])
 plt.ylabel("Annual Medical Cost")
-os.makedirs("outputs", exist_ok=True)
 plt.savefig("outputs/cost_vs_age.png", bbox_inches="tight")
 plt.close()
 
