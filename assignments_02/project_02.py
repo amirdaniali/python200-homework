@@ -34,7 +34,7 @@ plt.xlabel("G3")
 plt.ylabel("Count")
 os.makedirs("outputs", exist_ok=True)
 plt.savefig("outputs/g3_distribution.png", bbox_inches="tight")
-plt.show()
+plt.close()
 
 # Task 2: Preprocess the Data
 
@@ -101,9 +101,9 @@ plt.title("G3 vs Failures")
 plt.xlabel("Failures")
 plt.ylabel("G3")
 plt.savefig("outputs/g3_vs_failures.png", bbox_inches="tight")
-plt.show()
+plt.close()
 # todo
-# Failures appears to be negatively related to final grade.
+
 
 plt.figure(figsize=(8, 6))
 plt.scatter(df_clean["studytime"], df_clean["G3"], alpha=0.7)
@@ -111,9 +111,20 @@ plt.title("G3 vs Study Time")
 plt.xlabel("Study Time")
 plt.ylabel("G3")
 plt.savefig("outputs/g3_vs_studytime.png", bbox_inches="tight")
-plt.show()
-# todo
-# Higher study time appears to be associated with higher final grades.
+plt.close()
+
+# Correlations with G3:
+# The values below are sorted from the most negative relationship to the most positive relationship.
+# failures has the strongest negative correlation with G3, which means students with more prior failures tend to earn lower final grades.
+# absences is also fairly negative, which suggests missed class time is associated with weaker outcomes, even after removing G3=0 rows.
+# Walc and goout are both negative as well, which may reflect that more weekend drinking and more time going out with friends leave less time or energy for academics.
+# age is mildly negative, which may indicate that older students in this dataset are slightly more likely to have lower grades, possibly because age can proxy for grade repetition or delayed progress.
+# traveltime is only weakly negative, so commute time appears to matter less than failure history, attendance, or study habits.
+# freetime is very close to zero, which suggests free time by itself is not strongly related to performance in a simple linear sense.
+# studytime is positive, which means more study time is associated with higher G3.
+# Medu and Fedu are also positive, suggesting that parents' education levels have a modest positive association with student performance.
+# The strongest overall relationship in this list is failures on the negative side and Medu on the positive side, although neither is close to a perfect predictor.
+# None of these correlations should be treated as causal on their own because several variables may overlap or influence each other indirectly.
 
 # Task 4: Baseline Model
 
@@ -168,17 +179,21 @@ Look carefully at the coefficients. Sort them mentally from largest to smallest.
 Finally, add a comment answering: if you were deploying this model in production, which features would you keep and which would you drop? Justify your choices based on what you see in the numbers."""
 
 feature_cols = [
-    "failures",
+    "age",
     "Medu",
     "Fedu",
+    "traveltime",
     "studytime",
-    "higher",
+    "failures",
+    "absences",
+    "freetime",
+    "goout",
+    "Walc",
     "schoolsup",
     "internet",
-    "sex",
-    "freetime",
+    "higher",
     "activities",
-    "traveltime",
+    "sex",
 ]
 
 X = df_clean[feature_cols].values
@@ -204,7 +219,7 @@ print("Feature coefficients:")
 for name, coef in zip(feature_cols, model.coef_):
     print(f"{name:12s}: {coef:+.3f}")
 
-# A surprisingly positive coefficient may reflect correlation with other features rather than a direct causal effect.
+# A surprisingly positive coefficient can show correlation with other features rather than a direct causal effect.
 # For deployment, I would keep the features with clear signal and reasonable real-world meaning, and drop weak or unstable ones if they do not improve test performance.
 
 # Task 6: Evaluate and Summarize
@@ -220,7 +235,6 @@ Then write a plain-language summary in your comments statements covering:
     One result that surprised you
 """
 
-# todo
 
 plt.figure(figsize=(8, 6))
 plt.scatter(y_pred, y_test, alpha=0.8)
@@ -231,15 +245,17 @@ plt.title("Predicted vs Actual (Full Model)")
 plt.xlabel("Predicted G3")
 plt.ylabel("Actual G3")
 plt.savefig("outputs/predicted_vs_actual.png", bbox_inches="tight")
-plt.show()
+plt.close()
 
 # Points above the diagonal mean the actual grade is higher than predicted.
 # Points below the diagonal mean the model overpredicted the grade.
-
-# The filtered dataset is smaller after removing G3=0 rows, and the test set is 20% of that cleaned data.
-# On a 0-20 scale, the RMSE is the typical number of grade points the model misses by.
-# The largest positive coefficient shows the strongest feature associated with higher grades, and the largest negative coefficient shows the strongest feature associated with lower grades.
-# One surprising result is that some binary or family-background features may have weaker or less intuitive coefficients than expected because they overlap with other predictors.
+# The scatter is not perfectly uniform: the model tends to miss some lower and higher grades more than the middle range, which suggests it is less accurate at the extremes.
+# The filtered dataset has 357 rows, and the 20% test split contains 72 rows.
+# The RMSE of about 2.86 means the model is typically off by almost three grade points on the 0-20 scale.
+# The test R^2 of about 0.154 means the model explains only a modest amount of the variation in final grades.
+# The largest positive coefficient is higher at +0.610, which means students who want to pursue higher education tend to have slightly higher predicted G3 after controlling for the other features.
+# The largest negative coefficient is schoolsup at -2.062, which likely reflects the fact that school support is often assigned to students who are already struggling, not that support itself lowers grades.
+# Another result is that internet has a positive coefficient, which may reflect home resources and background differences rather than a direct causal effect.
 
 # Task 7: Neglected Feature G1
 X_g1 = df_clean[feature_cols + ["G1"]].values
