@@ -49,7 +49,7 @@ print(f"Shape before filtering G3=0 rows: {df_before.shape}")
 df_clean = df[df["G3"] != 0].copy()
 print(f"Shape after filtering G3=0 rows: {df_clean.shape}")
 
-# Keeping G3=0 rows would distort the model because those rows represent students who did not take the final exam, not true low grades.
+# Keeping G3=0 rows would distort the model because those rows represent students who did not take the final exam, not true low grades..
 
 binary_cols = ["schoolsup", "internet", "higher", "activities"]
 for col in binary_cols:
