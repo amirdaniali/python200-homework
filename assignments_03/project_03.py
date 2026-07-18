@@ -588,14 +588,25 @@ for name, model in models_for_cv.items():
     print("\n------------------------------")
     print(name)
 
-    if "PCA" in name:
-        X_cv = X_train_pca
-    elif "Scaled" in name:
+    if name == "KNN Unscaled":
+        X_cv = X_train
+
+    elif name == "KNN Scaled":
         X_cv = X_train_scaled
+
+    elif name == "KNN PCA":
+        X_cv = X_train_pca
+
+    elif name == "Logistic Regression":
+        X_cv = X_train_scaled
+
+    elif name == "Logistic Regression PCA":
+        X_cv = X_train_pca
+
     else:
         X_cv = X_train
 
-    scores = cross_val_score(model, X_train, y_train, cv=5)
+    scores = cross_val_score(model, X_cv, y_train, cv=5)
 
     cv_results[name] = scores
 
@@ -662,8 +673,10 @@ print(classification_report(y_test, rf_pipeline_pred))
 #
 # Logistic Regression Pipeline
 #
-# Logistic Regression depends on feature magnitude, so scaling is included.
-# PCA was tested earlier but reduced performance, so it is not included.
+# PCA was tested earlier but slightly reduced Logistic Regression accuracy,
+# so the final pipeline includes only StandardScaler before the classifier.
+# If PCA had improved performance, it would have been added as another
+# pipeline step between the scaler and the classifier.
 
 logreg_pipeline = Pipeline(
     [

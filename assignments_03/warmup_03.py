@@ -150,7 +150,8 @@ k=15, mean CV score=0.9666666666666666
 print(f"\nBest k: {best_k}")
 
 
-# I would choose the k = 5 or k = 7 for their highest mean CV scores because it performs best on validation data.
+# I would choose k=5 because it achieved the highest mean cross-validation
+# score while using fewer neighbors than k=7, making it the simpler model.
 
 # --- Classifier Evaluation ---
 
@@ -206,20 +207,15 @@ What does this tell you about what regularization is doing?
 
 
 for C in [0.01, 1.0, 100]:
-    model = OneVsRestClassifier(
-        LogisticRegression(
-            C=C,
-            solver="liblinear",
-            max_iter=1000,
-        )
+
+    model = LogisticRegression(
+        C=C, solver="liblinear", max_iter=1000, multi_class="ovr"
     )
 
     model.fit(X_train_scaled, y_train)
 
-    coef_sum = sum(np.abs(est.coef_).sum() for est in model.estimators_)
-
     print(f"C={C}")
-    print(f"Total coefficient magnitude: {coef_sum}")
+    print(np.abs(model.coef_).sum())
 
 # As C increases, the total coefficient magnitude increases because regularization becomes weaker.
 # Smaller values of C apply stronger regularization, which shrinks the model coefficients.
@@ -315,13 +311,14 @@ fig, axes = plt.subplots(len(n_values) + 1, 5, figsize=(10, 10))
 for col in range(5):
     axes[0, col].imshow(images[col], cmap="gray_r")
     axes[0, col].axis("off")
-    axes[0, col].set_title("Original")
+    axes[0, 0].set_ylabel("Original", fontsize=12)
 
 for row, n in enumerate(n_values, start=1):
     for col in range(5):
         recon = reconstruct_digit(col, scores, pca, n)
         axes[row, col].imshow(recon, cmap="gray_r")
         axes[row, col].axis("off")
+        axes[row, 0].set_ylabel(f"{n} PCs")
         if col == 0:
             axes[row, col].set_ylabel(f"n={n}")
 
