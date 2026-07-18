@@ -53,7 +53,7 @@ print(f"Original Shape: {x.shape}")
 print(f"Modified Shape: {x_modified.shape}")
 
 """
-Scikit-learn needs X to be 2D to distinguish between features and samples. The x[0] is the first feature, and x[1] is the second feature and so on. Each feature has multiple samples. Scikit needs to know if we have 5 features total with 1 sample each or if we have 1 feature with 5 samples."""
+Scikit-learn needs X to be 2D to distinguish between features and samples. A feature is like a column in a dataframe and samples are rows of data in each column. Each feature has multiple samples. Scikit needs to know if we have 5 features total with 1 sample each or if we have 1 feature with 5 samples."""
 
 # Sklearn Q3
 
@@ -78,6 +78,9 @@ labels = kmeans.predict(X_clusters)  # 3. Predict a label for each point
 
 for i, center in enumerate(kmeans.cluster_centers_):
     plt.plot(center[0], center[1], "kx")
+    plt.xlabel("Data Points")
+    plt.ylabel("Cluster Centers")
+    plt.title("Clusters Found by K-Means")
     print(f"Cluster Center No {i}: {center}")
     print(f"Number of points in cluster {i}: {np.bincount(labels)[i]}")
 
@@ -90,7 +93,9 @@ plt.xlabel("Data Points")
 
 
 plt.tight_layout()
-plt.show()
+os.makedirs("outputs", exist_ok=True)
+plt.savefig("outputs/kmeans_clusters.png", bbox_inches="tight")
+plt.close()
 
 # Linear Regression
 
@@ -129,11 +134,10 @@ plt.title("Medical Cost vs Age")
 plt.xlabel("Age")
 plt.legend(["Smoker", "Cost"])
 plt.ylabel("Annual Medical Cost")
-os.makedirs("outputs", exist_ok=True)
 plt.savefig("outputs/cost_vs_age.png", bbox_inches="tight")
-plt.show()
+plt.close()
 
-# The plot should show two visiblly distinct groups, which suggests smoker status has a strong effect on medical cost.
+# The plot shows two visiblly distinct groups, which suggests smoker status has a strong effect on medical cost.
 
 # Linear Regression Q2
 
@@ -223,7 +227,7 @@ plt.xlabel("Predicted")
 plt.ylabel("Actual")
 os.makedirs("outputs", exist_ok=True)
 plt.savefig("outputs/predicted_vs_actual.png", bbox_inches="tight")
-plt.show()
+plt.close()
 
 # A point above the diagonal means the actual value is higher than the prediction.
 # A point below the diagonal means the model predicted a value that was too high.
