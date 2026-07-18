@@ -169,7 +169,7 @@ plt.grid(True)
 
 plt.tight_layout()
 
-plt.savefig("outputs/pca_explained_variance.png")
+plt.savefig("outputs/pca_variance_explained.png")
 plt.close()
 
 n_components = np.argmax(cumulative_variance >= 0.90) + 1
