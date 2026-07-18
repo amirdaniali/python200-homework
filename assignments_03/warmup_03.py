@@ -136,8 +136,6 @@ for k in k_values:
         best_score = mean_score
         best_k = k
 
-print(f"\nBest k: {best_k}")
-
 """Result:
 k=1, mean CV score=0.9416666666666668
 k=3, mean CV score=0.9583333333333334
@@ -148,6 +146,9 @@ k=11, mean CV score=0.9583333333333334
 k=13, mean CV score=0.9583333333333334
 k=15, mean CV score=0.9666666666666666
 """
+
+print(f"\nBest k: {best_k}")
+
 
 # I would choose the k = 5 or k = 7 for their highest mean CV scores because it performs best on validation data.
 
@@ -287,7 +288,9 @@ plt.tight_layout()
 plt.savefig("outputs/pca_variance_explained.png")
 plt.close()
 
-# About 20 components are needed to explain roughly 80% of the variance.
+# The cumulative variance plot shows how many components are needed to retain
+# most of the information. Around 20 components capture approximately 80% of
+# the variance, while fewer components lose more information.
 
 """PCA Question 4
 
@@ -312,8 +315,7 @@ fig, axes = plt.subplots(len(n_values) + 1, 5, figsize=(10, 10))
 for col in range(5):
     axes[0, col].imshow(images[col], cmap="gray_r")
     axes[0, col].axis("off")
-    if col == 2:
-        axes[0, col].set_title("Original")
+    axes[0, col].set_title("Original")
 
 for row, n in enumerate(n_values, start=1):
     for col in range(5):

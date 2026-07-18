@@ -278,9 +278,11 @@ for depth in depths:
     print(f"Testing Accuracy : {test_accuracy:.4f}")
     print()
 
+# Although the unlimited tree has slightly higher test accuracy, its training
+# accuracy is almost perfect (0.9997), showing strong overfitting.
+# max_depth=10 provides nearly the same test performance while reducing the
+# risk of memorizing training examples, so it is a better production choice.
 
-# Choose the depth that gives strong test accuracy without
-# memorizing the training data.
 
 best_depth = 10
 
@@ -528,7 +530,21 @@ patterns are strong indicators of spam.
 Accuracy is not the only important metric for a spam filter. False positives
 are especially costly because legitimate emails may be hidden from users.
 A production spam filter should balance precision and recall depending on
-the cost of each type of mistake."""
+the cost of each type of mistake.
+
+# Summary:
+#
+# Random Forest performed best overall because it achieved the highest test
+# accuracy and strong cross-validation performance.
+#
+# PCA improved neither KNN nor Logistic Regression because reducing dimensions
+# removed some useful information. Scaling was more important than PCA for these
+# models.
+#
+# For spam detection, accuracy alone is not enough. False positives are costly
+# because legitimate emails may be incorrectly filtered as spam. False negatives
+# are also important because spam can reach the user. A good spam filter should
+# balance precision and recall depending on the user's priorities."""
 
 # --- Task 4: Cross-Validation ---
 
@@ -551,23 +567,15 @@ print("Task 4: Cross-Validation")
 from sklearn.pipeline import Pipeline
 
 models_for_cv = {
-    "KNN Unscaled": KNeighborsClassifier(n_neighbors=5),
-    "KNN Scaled": Pipeline(
-        [
-            ("scaler", StandardScaler()),
-            ("classifier", KNeighborsClassifier(n_neighbors=5)),
-        ]
-    ),
+    "KNN Scaled": KNeighborsClassifier(n_neighbors=5),
+    "KNN PCA": KNeighborsClassifier(n_neighbors=5),
     "Decision Tree": DecisionTreeClassifier(max_depth=10, random_state=42),
     "Random Forest": RandomForestClassifier(n_estimators=100, random_state=42),
-    "Logistic Regression": Pipeline(
-        [
-            ("scaler", StandardScaler()),
-            (
-                "classifier",
-                LogisticRegression(C=1.0, max_iter=1000, solver="liblinear"),
-            ),
-        ]
+    "Logistic Regression Scaled": LogisticRegression(
+        C=1.0, max_iter=1000, solver="liblinear"
+    ),
+    "Logistic Regression PCA": LogisticRegression(
+        C=1.0, max_iter=1000, solver="liblinear"
     ),
 }
 
@@ -579,6 +587,13 @@ for name, model in models_for_cv.items():
 
     print("\n------------------------------")
     print(name)
+
+    if "PCA" in name:
+        X_cv = X_train_pca
+    elif "Scaled" in name:
+        X_cv = X_train_scaled
+    else:
+        X_cv = X_train
 
     scores = cross_val_score(model, X_train, y_train, cv=5)
 
