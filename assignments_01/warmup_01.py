@@ -399,6 +399,17 @@ def celsius_to_fahrenheit(celsius: float) -> float:
     """
     return celsius * 9 / 5 + 32
 
+    # I changed the 5 to 4 and here is what happened.
+    # $ pytest .\warmup_01.py
+    #     def test_celsius_to_fahrenheit():
+    #         assert celsius_to_fahrenheit(0) == 32
+    # >       assert celsius_to_fahrenheit(100) == 212
+    # E       assert 257.0 == 212
+    # E        +  where 257.0 = celsius_to_fahrenheit(100)
+    #
+    # warmup_01.py:422: AssertionError
+    # Result: FAILED warmup_01.py::test_celsius_to_fahrenheit - assert 257.0 == 212
+
 
 def mean(values: list[float]) -> float:
     """Calculate the arithmetic mean of a list of numbers.
