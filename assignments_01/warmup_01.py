@@ -453,22 +453,6 @@ def test_mean_values(values, expected):
 # because it reduces code duplication, makes maintenance easier, and provides clearer test organization
 
 
-def test_broken_celsius_to_fahrenheit():
-    # Deliberately broken version for demonstration:
-    # return celsius * 9 / 4 + 32  # Changed 5 to 4
-
-    # When broken, pytest shows:
-    # FAILED warmup_01.py::test_celsius_to_fahrenheit - AssertionError: assert 32.0 == 212
-    # +  where 32.0 = celsius_to_fahrenheit(100)
-    #
-    # The specific values pytest showed were:
-    # - Expected: 212 (for 100C input)
-    # - Actual: 257.0 (from the broken calculation)
-    # This is more useful than a bare "assertion failed" because it shows exactly what inputs
-    # caused the failure and what the expected vs actual values were, making debugging much faster
-    pass
-
-
 """
 
 Final Output: 
