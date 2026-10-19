@@ -33,6 +33,10 @@ class DailySummary:
         """Return the spread between the daily high and low, in degrees Celsius."""
         return self.temp_max - self.temp_min
 
+    # I swap temp_max and temp_min in this function and tested the results with running pytest
+    # The tests\test_summarize.py file broke
+    # Result: FAILED tests/test_summarize.py::test_max_and_min_for_known_input - AssertionError: assert -23.0 == 23.0
+
 
 class DailyAggregator:
     """Group hourly readings by calendar date and summarize each day.

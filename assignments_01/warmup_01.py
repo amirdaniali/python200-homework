@@ -399,6 +399,17 @@ def celsius_to_fahrenheit(celsius: float) -> float:
     """
     return celsius * 9 / 5 + 32
 
+    # I changed the 5 to 4 and here is what happened.
+    # $ pytest .\warmup_01.py
+    #     def test_celsius_to_fahrenheit():
+    #         assert celsius_to_fahrenheit(0) == 32
+    # >       assert celsius_to_fahrenheit(100) == 212
+    # E       assert 257.0 == 212
+    # E        +  where 257.0 = celsius_to_fahrenheit(100)
+    #
+    # warmup_01.py:422: AssertionError
+    # Result: FAILED warmup_01.py::test_celsius_to_fahrenheit - assert 257.0 == 212
+
 
 def mean(values: list[float]) -> float:
     """Calculate the arithmetic mean of a list of numbers.
@@ -451,22 +462,6 @@ def test_mean_values(values, expected):
 # PASSED - warmup_01.py::test_mean_values[[1.5, 2.5, 3.5]-2.5] - 1 passed
 # One parametrized test with four cases is better than four nearly identical test functions
 # because it reduces code duplication, makes maintenance easier, and provides clearer test organization
-
-
-def test_broken_celsius_to_fahrenheit():
-    # Deliberately broken version for demonstration:
-    # return celsius * 9 / 4 + 32  # Changed 5 to 4
-
-    # When broken, pytest shows:
-    # FAILED warmup_01.py::test_celsius_to_fahrenheit - AssertionError: assert 32.0 == 212
-    # +  where 32.0 = celsius_to_fahrenheit(100)
-    #
-    # The specific values pytest showed were:
-    # - Expected: 212 (for 100C input)
-    # - Actual: 257.0 (from the broken calculation)
-    # This is more useful than a bare "assertion failed" because it shows exactly what inputs
-    # caused the failure and what the expected vs actual values were, making debugging much faster
-    pass
 
 
 """
