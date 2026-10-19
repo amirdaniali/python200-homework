@@ -131,17 +131,28 @@ print(f"Baseline RMSE was {base_rmse:.3f}; change: {rmse - base_rmse:+.3f}")
 
 for name, coef in zip(feature_cols, model.coef_):
     print(f"{name:22s}: {coef:+.3f}")
-# Interpreting coefficients (check the signs printed above against these):
+
+# Train R²: 0.882
+# Test R²:  0.909
+# Test RMSE: 2.537 °C
+# Baseline test R² was 0.867; change: +0.042
+# Baseline RMSE was 3.067; change: -0.530
+
+# temperature_2m_min    : +0.890
+# precipitation_sum     : -0.192
+# wind_speed_10m_max    : -0.036
+# is_summer             : +1.295
+
+# Interpreting coefficients
 # - temperature_2m_min: positive and close to 1 or a bit higher; warmer lows
 #   raise the predicted high.
 # - precipitation_sum: negative; rainy days are cloudier and cooler, so they
 #   lower the predicted high.
-# - wind_speed_10m_max: usually small; the sign can go either way and is the
-#   least intuitive. Windy days often come with fronts, which can be cooler.
+# - wind_speed_10m_max: small negative number; Windy days often come with fronts, which can be cooler.
 # - is_summer: positive but small once the low is in the model. If it came out
 #   negative, that would be surprising, but it can happen because the low
 #   already accounts for summer warmth.
-# Train vs test R²: they should be close. A small gap means the model is
+# Train vs test R²: they are close. A small gap means the model is
 # generalizing well and is not overfitting; this is expected for a simple
 # linear model with only four features and ~290 training rows.
 
