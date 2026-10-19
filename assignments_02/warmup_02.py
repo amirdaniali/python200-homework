@@ -98,12 +98,18 @@ print("\nLR Q4 test R² (two features):", r2_full)
 print("LR Q4 test R² (Q3, temp_min only):", r2_simple)
 print("temp_min coefficient:", model_full.coef_[0])
 print("is_rainy coefficient:", model_full.coef_[1])
+
+# LR Q4 test R² (two features): 0.945061816962249
+# LR Q4 test R² (Q3, temp_min only): 0.8944151516634623
+# temp_min coefficient: 0.9764368687661398
+# is_rainy coefficient: -2.9190219583163612
+
 # Adding the rain flag raises R² noticeably, because it explains the gap
 # between the two bands we saw in the scatter plot. The is_rainy coefficient
-# (about -3 here; the data was built with -4, and the gap is sampling noise
+# (about -2.91 here; the data was built with -4, and the gap is sampling noise
 # from a small test set) is the average change in the daily high on a rainy
 # day versus a dry day, holding the low temperature fixed: rainy days are
-# roughly 3 degrees cooler.
+# roughly 2.91 degrees cooler.
 
 # Q5
 y_pred_full = model_full.predict(Xf_test)
