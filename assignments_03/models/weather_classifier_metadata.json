@@ -1,0 +1,15 @@
+{
+  "model_type": "LogisticRegression",
+  "python_version": "3.13.5",
+  "sklearn_version": "1.9.1",
+  "features": [
+    "temperature_2m_max",
+    "temperature_2m_min",
+    "precipitation_sum",
+    "wind_speed_10m_max"
+  ],
+  "label_rule": "good_for_running = 1 if 7 <= temperature_2m_max <= 26 and temperature_2m_min >= 0 and precipitation_sum < 3 and wind_speed_10m_max < 30, else 0 (units: degrees C, mm, km/h)",
+  "city": "Charlotte, NC",
+  "test_accuracy": 0.8767123287671232,
+  "test_f1": 0.8421052631578947
+}
