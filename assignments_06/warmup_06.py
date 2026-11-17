@@ -224,8 +224,8 @@ print("Keyword Q2 - Selected document:", results[0][0])
 
 # --- Keyword Q3 ---
 # Keyword Q3
-# >>> FILL IN YOUR OWN PREDICTION (write it BEFORE you run this script, in your own words):
-# "I predict the selected document will be ___ because ___."
+# I expect the system to suggest the loyalty.txt for rewards because it makes the most sense.
+# elected document will be ___ because ___."
 query = "How do I sign up for rewards?"
 results = simple_keyword_retrieval(query, documents, verbose=True)
 print("Keyword Q3 - Selected document:", results[0][0])
@@ -245,8 +245,7 @@ print("Keyword Q3 - Selected document:", results[0][0])
 # "loyalty program" and "points", never "rewards", so the exact-word match fails even
 # though the meaning is the same. This is the synonym problem: keyword retrieval cannot
 # treat "rewards" and "loyalty program" as related.
-# >>> FILL IN YOUR OWN PREDICTION CHECK: write whether your prediction was correct and,
-# if it surprised you, what you learned.
+# My predictaion was not correct and that is surprising. Turns out our AI is not very smart yet.
 
 
 # =====================================================================
